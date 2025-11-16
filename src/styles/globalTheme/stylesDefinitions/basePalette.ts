@@ -9,6 +9,7 @@ const basePalette = {
     green: '#4CAF50',
   },
   darkColors: {
+    pureBlack: '#000',
     black: '#191919',
     gray: '#2e2e2e',
     darkGray: '#1c1c1c',

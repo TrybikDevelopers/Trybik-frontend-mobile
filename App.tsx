@@ -17,7 +17,6 @@ import { useSettingsStore } from './src/store/settingsStore';
 import { compareVersions } from './src/utils/compareVersions';
 import { getAppVersion } from './src/utils/getAppVersion';
 
-
 type RootStackParamList = {
   Settings: undefined;
   Home: undefined;

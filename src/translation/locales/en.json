@@ -123,5 +123,10 @@
   "placeholderCalc2": "eg. 2",
   "ECTSVal": "ECTS Value",
   "removeCourseMenuBtnText": "Remove selected",
-  "showLectures": "Show lectures"
+  "showLectures": "Hide lectures",
+  "editSubject": "Edit subject",
+  "editSubjectText": "Input name of subject, value of ECTS and grade",
+  "addSubjectErrorText": "Select a subject",
+  "addECTSErrorText": "Enter correct ECTS value",
+  "addGradeErrorText": "Enter correct grade"
 }
