@@ -11,7 +11,7 @@ export interface SettingsState {
   lastFetchedDean: string | null;
   activeDropdown: GroupKey | null;
   showEmptySlots: boolean;
-  hideLectures: boolean;
+  showLectures: boolean;
   error: string | null;
   setupComplete: boolean;
   theme: Theme;
@@ -29,6 +29,6 @@ export interface SettingsState {
     setSetupComplete: (value: boolean) => void;
     setMode: (mode: 'light' | 'dark') => void;
     toggleMode: () => void;
-    setHideLectures: (value: boolean) => void;
+    setShowLectures: (value: boolean) => void;
   };
 }

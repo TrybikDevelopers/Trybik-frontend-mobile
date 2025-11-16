@@ -1,6 +1,6 @@
 {
   "name": "Trybik",
-  "version": "0.4.9",
+  "version": "0.4.10",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -37,7 +37,7 @@
     "react-native-switch-toggle": "^2.2.1",
     "react-native-toast-message": "^2.3.3",
     "react-native-uuid": "^2.0.3",
-    "react-native-vector-icons": "^10.2.0",
+    "react-native-vector-icons": "^10.3.0",
     "vexo-analytics": "^1.5.2",
     "zustand": "^5.0.7"
   },

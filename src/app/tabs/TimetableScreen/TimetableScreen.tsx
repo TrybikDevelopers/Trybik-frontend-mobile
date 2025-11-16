@@ -16,7 +16,6 @@ import {
 import { getCorrectColor } from '../../../utils/getCorrectColor';
 import getCorrectLetter from '../../../utils/getCorrectLetter';
 import checkActiveLesson from '../../../services/timetable/checkActiveLesson';
-import getCurrentWeekType from '../../../utils/getCurrentWeekType';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { useTheme } from '@shopify/restyle';
@@ -33,7 +32,8 @@ import { getFullSchedule } from '../../../utils/getFullSchedule.ts';
 
 import ConnectionAlertModal from '../../../components/modals/ConnectionAlertModal.tsx';
 import { useTranslation } from 'react-i18next';
-import LessonSeparator from './LessonSeparator.tsx'
+import LessonSeparator from './LessonSeparator.tsx';
+import initWeekAndDay from '../../../utils/initWeekAndDay.ts';
 
 const RenderLeftArrow = ({ color, size }: { color: string; size: number }) => (
   <Icon name="arrow-back-ios" color={color} size={size} />
@@ -58,8 +58,8 @@ const TimetableScreen = () => {
   const { timetable, academicHours, actions } = useTimetableStore();
   const { setTimetable, setAcademicHours, markOffline } = actions;
 
-  const [currentDayIndex, setCurrentDayIndex] = useState(0);
-  const [isOddWeek, setIsOddWeek] = useState(true);
+  const [DayIndex, setDayIndex] = useState(0);
+  const [OddWeek, setOddWeek] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -73,23 +73,25 @@ const TimetableScreen = () => {
   const groups = useSettingsStore(state => state.groups);
   const loading = useSettingsStore(state => state.loading);
   const showEmptySlots = useSettingsStore(state => state.showEmptySlots);
-  const hideLectures = useSettingsStore(state => state.hideLectures);
+  const showLectures = useSettingsStore(state => state.showLectures);
 
   const { fetchInitialDeanGroups } = useSettingsActions();
 
+  const { isOddWeek, currentDayIndex } = initWeekAndDay();  
+
   const navigationRef = useRef({
-    currentDayIndex,
-    isOddWeek,
+    DayIndex,
+    OddWeek,
     timetableLength: 0,
   });
 
   useEffect(() => {
     navigationRef.current = {
-      currentDayIndex,
-      isOddWeek,
+      DayIndex,
+      OddWeek,
       timetableLength: timetable.length,
     };
-  }, [currentDayIndex, isOddWeek, timetable.length]);
+  }, [DayIndex, OddWeek, timetable.length]);
 
   // Initialize dean groups on mount if not loaded
   useEffect(() => {
@@ -126,11 +128,8 @@ const TimetableScreen = () => {
         ]);
         setAcademicHours(hours);
         setTimetable(timetableResponse.data);
-        setIsOddWeek(getCurrentWeekType());
-        const today = new Date();
-        const jsDay = today.getDay();
-        const index = jsDay === 0 || jsDay === 6 ? 0 : jsDay - 1;
-        setCurrentDayIndex(index);
+        setOddWeek(isOddWeek);
+        setDayIndex(currentDayIndex);
         markOffline(false);
       } catch (err: any) {
         markOffline(true);
@@ -188,16 +187,15 @@ const TimetableScreen = () => {
 
     setIsNavigating(true);
 
-    const { currentDayIndex: currentIndex, timetableLength } =
-      navigationRef.current;
+    const { DayIndex: currentIndex, timetableLength } = navigationRef.current;
 
     if (currentIndex < timetableLength - 1) {
       // Normal navigation within the week
-      setCurrentDayIndex(currentIndex + 1);
+      setDayIndex(currentIndex + 1);
     } else if (currentIndex === timetableLength - 1) {
       // At the last day (Friday), switch to next week and go to first day
-      setIsOddWeek(prev => !prev);
-      setCurrentDayIndex(0);
+      setOddWeek(prev => !prev);
+      setDayIndex(0);
     }
 
     // Re-enable navigation after a short delay
@@ -209,16 +207,15 @@ const TimetableScreen = () => {
 
     setIsNavigating(true);
 
-    const { currentDayIndex: currentIndex, timetableLength } =
-      navigationRef.current;
+    const { DayIndex: currentIndex, timetableLength } = navigationRef.current;
 
     if (currentIndex > 0) {
       // Normal navigation within the week
-      setCurrentDayIndex(currentIndex - 1);
+      setDayIndex(currentIndex - 1);
     } else if (currentIndex === 0) {
       // At the first day (Monday), switch to previous week and go to last day
-      setIsOddWeek(prev => !prev);
-      setCurrentDayIndex(timetableLength - 1);
+      setOddWeek(prev => !prev);
+      setDayIndex(timetableLength - 1);
     }
 
     // Re-enable navigation after a short delay
@@ -247,8 +244,8 @@ const TimetableScreen = () => {
     const isActive = checkActiveLesson(
       item,
       academicHours,
-      timetable[currentDayIndex]?.name,
-      isOddWeek,
+      timetable[DayIndex]?.name,
+      OddWeek,
     );
 
     const isEmptySlot = !item.name;
@@ -287,11 +284,11 @@ const TimetableScreen = () => {
   };
 
   const getCurrentDayData = () => {
-    const currentDay = timetable[currentDayIndex];
+    const currentDay = timetable[DayIndex];
     if (!currentDay) return [];
-    let lessons = isOddWeek ? currentDay.odd : currentDay.even;
+    let lessons = OddWeek ? currentDay.odd : currentDay.even;
 
-    if (hideLectures) {
+    if (!showLectures) {
       lessons = lessons.filter(item => item.type !== 'LECTURE');
     }
     if (!showEmptySlots) return lessons;
@@ -300,7 +297,7 @@ const TimetableScreen = () => {
   };
 
   const getWeekTypeText = () => {
-    return isOddWeek ? t('oddWeek') : t('evenWeek');
+    return OddWeek ? t('oddWeek') : t('evenWeek');
   };
 
   // Show loading state
@@ -329,11 +326,7 @@ const TimetableScreen = () => {
           </TouchableOpacity>
 
           <Text style={styles.dayTitle}>
-            {t(
-              `dayNames.${
-                dayNameMap[timetable[currentDayIndex]?.name] || 'Monday'
-              }`,
-            )}
+            {t(`dayNames.${dayNameMap[timetable[DayIndex]?.name] || 'Monday'}`)}
           </Text>
 
           <TouchableOpacity
@@ -347,7 +340,7 @@ const TimetableScreen = () => {
         {/* Week indicator */}
         <TouchableOpacity
           style={styles.weekIndicator}
-          onPress={() => setIsOddWeek(prev => !prev)}
+          onPress={() => setOddWeek(prev => !prev)}
           hitSlop={15}
         >
           <Icon
@@ -359,13 +352,13 @@ const TimetableScreen = () => {
         </TouchableOpacity>
 
         {/* Lessons list */}
-        {timetable[currentDayIndex] && (
+        {timetable[DayIndex] && (
           <FlatList
             key={showEmptySlots ? 'with-empty' : 'without-empty'}
             data={getCurrentDayData()}
             renderItem={renderLesson}
             keyExtractor={item =>
-              `${item.rowId}-${item.classroom}-${isOddWeek ? 'odd' : 'even'}`
+              `${item.rowId}-${item.classroom}-${OddWeek ? 'odd' : 'even'}`
             }
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContainer}

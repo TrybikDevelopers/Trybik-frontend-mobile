@@ -5,7 +5,7 @@ const basePalette = {
     mutedPurple: '#7b79ff4b',
     red: '#e7000b', //'#a44648',
     brightRed: '#ff6467',
-
+    wmcolor: '#AF0A7F',
     green: '#4CAF50',
   },
   darkColors: {

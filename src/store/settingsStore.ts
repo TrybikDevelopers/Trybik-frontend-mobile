@@ -27,7 +27,7 @@ export const useSettingsStore = create<SettingsState>()(
       lastFetchedDean: null,
       activeDropdown: null,
       showEmptySlots: true,
-      hideLectures: false,
+      showLectures: true,
 
       error: null,
       setupComplete: false,
@@ -64,11 +64,11 @@ export const useSettingsStore = create<SettingsState>()(
                 'X-API-KEY': API_KEY,
               },
             });
-            console.log(
-              `fetch from store -> ${API_URL}timetables/groups/general}`,
-            );
+            // console.log(
+            //   `fetch from store -> ${API_URL}timetables/groups/general}`,
+            // );
             const data: string[] = await res.json();
-            console.log(data);
+            // console.log(data);
             if (data.length > 0) {
               set({
                 options: { ...get().options, dean: data }, // Store all dean options
@@ -78,7 +78,7 @@ export const useSettingsStore = create<SettingsState>()(
               await get().actions.fetchDependentGroups(data[0]);
             }
           } catch (e: any) {
-            console.error('Failed to fetch dean groups:', e);
+            // console.error('Failed to fetch dean groups:', e);
             set({
               loading: false,
               error: e.message || 'Blad pobierania grupy dziekanskiej',
@@ -100,11 +100,11 @@ export const useSettingsStore = create<SettingsState>()(
                 },
               },
             );
-            console.log(
-              `fetch from store -> ${API_URL}timetables/groups/${encodeURIComponent(
-                deanGroup,
-              )}, \n `,
-            );
+            // console.log(
+            //   `fetch from store -> ${API_URL}timetables/groups/${encodeURIComponent(
+            //     deanGroup,
+            //   )}, \n `,
+            // );
             const data: string[] = await res.json();
 
             const newOptions = {
@@ -140,7 +140,7 @@ export const useSettingsStore = create<SettingsState>()(
               },
             });
           } catch (e: any) {
-            console.error('Failed to fetch dependent groups:', e);
+            // console.error('Failed to fetch dependent groups:', e);
             set({
               loading: false,
               error: e.message || 'Blad pobierania grup zaleznych',
@@ -165,8 +165,8 @@ export const useSettingsStore = create<SettingsState>()(
         setSetupComplete(value: boolean) {
           set({ setupComplete: value });
         },
-        setHideLectures(value: boolean) {
-          set({ hideLectures: value });
+        setShowLectures(value: boolean) {
+          set({ showLectures: value });
         },
         // --- Theme actions ---
         setMode(mode: 'light' | 'dark') {
@@ -192,7 +192,7 @@ export const useSettingsStore = create<SettingsState>()(
         groups: state.groups,
         options: state.options,
         setupComplete: state.setupComplete,
-        hideLectures: state.hideLectures,
+        showLectures: state.showLectures,
         theme: state.theme,
         themeMode: state.themeMode,
       }),

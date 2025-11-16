@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import {
-  useSettingsStore,
-  useSettingsActions,
-} from '../../store/settingsStore';
-import GroupSelect from '../../components/ui/GroupSelectDropdown';
-import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shopify/restyle';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Text, TouchableOpacity, View } from 'react-native';
+import GroupSelect from '../../components/ui/GroupSelectModal';
+import {
+  useSettingsActions,
+  useSettingsStore,
+} from '../../store/settingsStore';
 import { Theme } from '../../styles/globalTheme/theme';
+import { createSetupStyles } from './FirstTimeSetupScreen.styles';
 
 export default function FirstTimeSetupScreen({
   onDone,
@@ -64,115 +65,79 @@ export default function FirstTimeSetupScreen({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{t('welcomeText')}</Text>
-      <Text style={styles.subtitle}>{t('selectGroupText')}</Text>
+      <View style={styles.labelsContainer}>
+        <Text style={styles.title}>{t('welcomeText')}</Text>
+        <Text style={styles.subtitle}>{t('selectGroupText')}</Text>
 
-      {showErrors && validationErrors.size > 0 && (
-        <Text style={styles.errorText}>{t('selectGroupText')}</Text>
-      )}
+          {showErrors && validationErrors.size > 0 && (
+            <Text style={styles.errorText}>{t('selectGroupText')}</Text>
+          )}
+        
+      </View>
 
       <View style={styles.dropdownContainer}>
-        <GroupSelect
-          groupTitle="Grupa Dziekańska"
-          groupName="GG"
-          activeDropdown={activeDropdown}
-          setActiveDropdown={setActiveDropdown}
-          hasError={hasError('dean')}
-          isOffline={false}
-        />
+        <View style={styles.selectWrapper}>
+          <GroupSelect
+            groupTitle="Grupa Dziekańska"
+            groupName="GG"
+            activeDropdown={activeDropdown}
+            setActiveDropdown={setActiveDropdown}
+            hasError={hasError('dean')}
+            isOffline={false}
+          />
+        </View>
         {groups.dean && (
-          <View style={styles.subGroups}>
+          <>
             {options.lab.length !== 0 && (
-              <GroupSelect
-                groupTitle="Grupa - L"
-                groupName="L"
-                activeDropdown={activeDropdown}
-                setActiveDropdown={setActiveDropdown}
-                hasError={hasError('lab')}
-                isOffline={false}
-              />
+              <View style={styles.selectWrapper}>
+                <GroupSelect
+                  groupTitle="Grupa Laboratoryjna"
+                  groupName="L"
+                  activeDropdown={activeDropdown}
+                  setActiveDropdown={setActiveDropdown}
+                  hasError={hasError('lab')}
+                  isOffline={false}
+                />
+              </View>
             )}
             {options.comp.length !== 0 && (
-              <GroupSelect
-                groupTitle="Grupa - K"
-                groupName="K"
-                activeDropdown={activeDropdown}
-                setActiveDropdown={setActiveDropdown}
-                hasError={hasError('comp')}
-                isOffline={false}
-              />
+              <View style={styles.selectWrapper}>
+                <GroupSelect
+                  groupTitle="Grupa Komputerowa"
+                  groupName="K"
+                  activeDropdown={activeDropdown}
+                  setActiveDropdown={setActiveDropdown}
+                  hasError={hasError('comp')}
+                  isOffline={false}
+                />
+              </View>
             )}
             {options.proj.length !== 0 && (
-              <GroupSelect
-                groupTitle="Grupa - P"
-                groupName="P"
-                activeDropdown={activeDropdown}
-                setActiveDropdown={setActiveDropdown}
-                hasError={hasError('proj')}
-                isOffline={false}
-              />
+              <View style={styles.selectWrapper}>
+                <GroupSelect
+                  groupTitle="Grupa Projektowa"
+                  groupName="P"
+                  activeDropdown={activeDropdown}
+                  setActiveDropdown={setActiveDropdown}
+                  hasError={hasError('proj')}
+                  isOffline={false}
+                />
+              </View>
             )}
-          </View>
+          </>
         )}
       </View>
 
-      <TouchableOpacity style={styles.confirmButton} onPress={handleContinue}>
+      <TouchableOpacity
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{
+          ...styles.confirmButton,
+          display: groups.dean ? 'flex' : 'none',
+        }}
+        onPress={handleContinue}
+      >
         <Text style={styles.confirmButtonText}>{t('confirmButton')}</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-// Themed styles
-const createSetupStyles = (theme: Theme) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      padding: 20,
-      backgroundColor: theme.colors.Foreground,
-    },
-    title: {
-      fontSize: 25,
-      fontFamily: 'InterMedium',
-      marginBottom: 10,
-      alignSelf: 'center',
-      color: theme.colors.textPrimary,
-    },
-    subtitle: {
-      fontSize: 20,
-      fontFamily: 'InterLight',
-      marginBottom: 10,
-      alignSelf: 'center',
-      color: theme.colors.textSecondary,
-    },
-    errorText: {
-      fontSize: 14,
-      fontFamily: 'InterLight',
-      marginBottom: 20,
-      alignSelf: 'center',
-      color: theme.colors.error,
-      textAlign: 'center',
-    },
-    dropdownContainer: {
-      gap: 10,
-      alignItems: 'center',
-    },
-    subGroups: {
-      marginBottom: 35,
-      gap: 10,
-    },
-    confirmButton: {
-      backgroundColor: theme.colors.confirmAccent,
-      paddingVertical: 12,
-      borderRadius: theme.borderRads.m,
-      marginTop: 20,
-      alignSelf: 'center',
-      width: '60%',
-    },
-    confirmButtonText: {
-      color: theme.colors.Foreground,
-      fontWeight: 'bold',
-      textAlign: 'center',
-    },
-  });
