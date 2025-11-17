@@ -16,8 +16,16 @@ export default function getCurrentWeekType(
     return new Date(d.setDate(diff));
   };
 
+  const targetDate = new Date(now);
+  const day = targetDate.getDay();
+  if (day === 6) {
+    targetDate.setDate(targetDate.getDate() + 2);
+  } else if (day === 0) {
+    targetDate.setDate(targetDate.getDate() + 1);
+  }
+
   const referenceWeekStart = getWeekStart(referenceDate);
-  const currentWeekStart = getWeekStart(now);
+  const currentWeekStart = getWeekStart(targetDate);
 
   const weeksDiff = Math.floor(
     (currentWeekStart.getTime() - referenceWeekStart.getTime()) / ONE_WEEK_MS,
