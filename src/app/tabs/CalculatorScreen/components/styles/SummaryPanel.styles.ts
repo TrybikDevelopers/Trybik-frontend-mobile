@@ -10,17 +10,17 @@ export const createSummaryPanelStyles = (theme: Theme) => {
   return StyleSheet.create({
     summaryContainer: {
       marginTop: 5,
-      paddingLeft: 15,
-      paddingRight: 15,
       borderWidth: 1,
       borderColor: colors.borderGray,
       width: '95%',
+      height: 70,
       paddingVertical: 7,
       borderRadius: theme.borderRads.m,
       alignSelf: 'center',
       display: 'flex',
+      justifyContent: 'space-around',
       flexDirection: 'column',
-      marginBottom: 20,
+      marginBottom: 15,
     },
     summarySpacer: { display: 'flex', flexDirection: 'row' },
     countersText: {

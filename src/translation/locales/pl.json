@@ -115,8 +115,8 @@
   "noItemsAddedInfoText": "Brak dodanych przedmiotów",
   "noItemsInfoText": "Kliknij przycisk +, aby dodać przedmiot",
   "gradeAverage": "Średnia ocen",
-  "ectsSum": "Suma punktów ECTS",
-  "weightedAverage": "Średnia ważona",
+  "ectsSum": "ECTS",
+  "weightedAverage": "Średnia",
   "addSubject": "Dodaj przedmiot",
   "addSubjectText": "Wprowadź nazwę przedmiotu, wartość ECTS i ocenę",
   "placeholderCalc": "Nie wbyrano",
@@ -129,6 +129,7 @@
   "addECTSErrorText": "Wprowadź poprawną wartość ECTS",
   "addGradeErrorText": "Wprowadź poprawną ocenę",
   "showLectures": "Ukryj wykłady",
-  "gradePlaceholder": "np. 3.5"
+  "gradePlaceholder": "np. 3.5",
+   "subjectsAmount": "PRZEDMIOTY"
 
 }

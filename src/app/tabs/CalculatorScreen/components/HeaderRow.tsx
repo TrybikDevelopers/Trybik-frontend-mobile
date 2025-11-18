@@ -30,25 +30,9 @@ const HeaderRow: React.FC<HeaderRowProps> = ({
         <Text style={styles.deleteButtonText}>{selectedIcon}</Text>
       </TouchableOpacity>
       <View style={styles.headerContainer}>
-        <Text
-          style={[styles.bottomMenu, styles.singleItemHeader, styles.leftText]}
-        >
-          {subjectLabel}
-        </Text>
-        <Text
-          style={[
-            styles.bottomMenu,
-            styles.singleItemHeader,
-            styles.centerText,
-          ]}
-        >
-          ECTS
-        </Text>
-        <Text
-          style={[styles.bottomMenu, styles.singleItemHeader, styles.rightText]}
-        >
-          {gradeLabel}
-        </Text>
+        <Text style={[styles.bottomMenu, styles.singleItemHeader, styles.leftText]}>{subjectLabel}</Text>
+        <Text style={[styles.bottomMenu, styles.singleItemHeader, styles.centerText]}>ECTS</Text>
+        <Text style={[styles.bottomMenu, styles.singleItemHeader, styles.rightText]}>{gradeLabel}</Text>
       </View>
     </View>
   );

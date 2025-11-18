@@ -114,9 +114,9 @@
   "gradeName": "Grade",
   "noItemsAddedInfoText": "No added subjects",
   "noItemsInfoText": "Click + button to add subject",
-  "gradeAverage": "Grade average",
-  "ectsSum": "Sum of ECTS",
-  "weightedAverage": "Weighted average",
+  "gradeAverage": "GPA",
+  "ectsSum": "ECTS",
+  "weightedAverage": "GPA",
   "addSubject": "Add subject",
   "addSubjectText": "Input name of subject, value of ECTS and grade",
   "placeholderCalc": "Nothing selected",
@@ -129,5 +129,6 @@
   "addSubjectErrorText": "Select a subject",
   "addECTSErrorText": "Enter correct ECTS value",
   "addGradeErrorText": "Enter correct grade",
-  "gradePlaceholder": "eg. 3.5"
+  "gradePlaceholder": "eg. 3.5",
+  "subjectsAmount": "SUBJECTS"
 }
