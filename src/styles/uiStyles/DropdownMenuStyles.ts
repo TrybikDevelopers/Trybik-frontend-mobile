@@ -2,29 +2,33 @@ import { StyleSheet } from 'react-native';
 import { Theme } from '../globalTheme/theme';
 
 export const createDropdownMenuStyles = (theme: Theme) => {
-
   const colors = {
     dropdownBackgroundColor: theme.colors.confirmAccent2,
     dropdownTextColor: theme.colors.textPrimary,
   };
 
   return StyleSheet.create({
-    buttonSizes: { width: '100%', height: '100%' },
     list: {
-      zIndex: 100,
+      zIndex: 1200,
       width: '100%',
-      height: '400%',
+      flex: 1,
       position: 'absolute',
+      top: 40,
+      height: 250,
     },
     container: {
-      margin: 32,
       alignItems: 'center',
     },
+    buttonPressed: {
+      opacity: 0.5,
+    },
     button: {
-      padding: 12,
+      width: '100%',
+      height: 40,
+      justifyContent: 'center',
+      alignItems: 'center',
       backgroundColor: colors.dropdownBackgroundColor,
       borderRadius: 8,
-      width: 200,
     },
     buttonText: {
       color: '#fff',
@@ -37,11 +41,17 @@ export const createDropdownMenuStyles = (theme: Theme) => {
       alignItems: 'center',
     },
     modal: {
-      // backgroundColor: '#222',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      height: 40,
       backgroundColor: colors.dropdownBackgroundColor,
       borderRadius: 8,
       paddingVertical: 8,
-      width: 200,
+    },
+    errorBorder: {
+      borderColor: 'red',
+      borderWidth: 2,
     },
     option: {
       padding: 12,
@@ -50,15 +60,19 @@ export const createDropdownMenuStyles = (theme: Theme) => {
       color: '#fff',
       textAlign: 'center',
     },
+    flatList: {
+      height: 400,
+    },
     groupSelectText: {
       // color: 'white',
+      textAlign: 'center',
       color: colors.dropdownTextColor,
       fontSize: 12,
     },
     placeholderText: {
       fontSize: 12,
       // color: '#9c9c9c',
-      color: colors.dropdownTextColor+'A0',
+      color: colors.dropdownTextColor + 'A0',
     },
   });
 };

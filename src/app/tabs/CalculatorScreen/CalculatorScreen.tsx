@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { View, Text } from 'react-native';
-import uuid from 'react-native-uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+import uuid from 'react-native-uuid';
 import { getSubjectList } from '../../../services/calculator/CalculatorService';
 import { useSettingsStore } from '../../../store/settingsStore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useTheme } from '@shopify/restyle';
 import { Theme } from '../../../styles/globalTheme/theme';
-import createCalculatorStyles from './styles/CalculatorScreen.styles.ts';
-import HeaderRow from './components/HeaderRow';
-import SummaryPanel from './components/SummaryPanel';
 import BatchActions from './components/BatchActions';
+import HeaderRow from './components/HeaderRow';
 import PopupForm from './components/PopupForm';
-import { CalcItem } from './types';
 import SubjectsList from './components/SubjectsList';
+import SummaryPanel from './components/SummaryPanel';
+import createCalculatorStyles from './styles/CalculatorScreen.styles.ts';
+import { CalcItem } from './types';
 
 // Constants promoted outside the component to avoid re-creation
 const STORAGE_KEY = '@calculator_subject_list';
@@ -59,51 +59,32 @@ function CalculatorScreen() {
     })();
   }, [deanGroup]);
 
-  const saveSubjectList = async (list: CalcItem[]) => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    } catch (error) {
-      console.error('Błąd zapisu listy przedmiotów:', error);
-    }
-  };
-
-  const loadSubjectList = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
-      if (jsonValue != null) setSubjectList(JSON.parse(jsonValue));
-    } catch (error) {
-      console.error('Błąd odczytu listy przedmiotów:', error);
-    }
-  };
-
   useEffect(() => {
-    loadSubjectList();
+    (async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
+        if (jsonValue != null) setSubjectList(JSON.parse(jsonValue));
+      } catch (error) {
+        console.error('Błąd odczytu listy przedmiotów:', error);
+      }
+    })();
   }, []);
+
   useEffect(() => {
-    saveSubjectList(subjectList);
+    (async () => {
+      try {
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(subjectList));
+      } catch (error) {
+        console.error('Błąd zapisu listy przedmiotów:', error);
+      }
+    })();
   }, [subjectList]);
 
-  // Derived values memoized to avoid repeated computations on render
-  const totalEcts = useMemo(
-    () => subjectList.reduce((sum, item) => sum + parseInt(item.ects, 10), 0),
-    [subjectList],
-  );
-
-  const averageGrade = useMemo(() => {
-    if (subjectList.length === 0) return '0.00';
-    const sum = subjectList.reduce(
-      (acc, item) => acc + parseFloat(item.grade),
-      0,
-    );
-    return (sum / subjectList.length).toFixed(2);
-  }, [subjectList]);
+  const totalEcts = useMemo(() => subjectList.reduce((sum, item) => sum + parseInt(item.ects, 10), 0), [subjectList]);
 
   const weightedAverage = useMemo(() => {
     if (subjectList.length === 0 || totalEcts === 0) return '0.00';
-    const weightedSum = subjectList.reduce(
-      (acc, item) => acc + parseFloat(item.grade) * parseInt(item.ects, 10),
-      0,
-    );
+    const weightedSum = subjectList.reduce((acc, item) => acc + parseFloat(item.grade) * parseInt(item.ects, 10), 0);
     return (weightedSum / totalEcts).toFixed(2);
   }, [subjectList, totalEcts]);
 
@@ -123,51 +104,38 @@ function CalculatorScreen() {
     setPopUpMenuVisible(false);
   };
 
-  const validate = () => {
-    let valid = true;
-    setSubjectError(false);
-    setEctsError(false);
-    setGradeError(false);
-
-    if (!subjectName.trim()) {
-      setSubjectError(true);
-      valid = false;
-    }
-
+  const validate = useCallback(() => {
+    const subjectValid = !!subjectName.trim();
     const ectsInt = parseInt(ectsPoints, 10);
-    if (isNaN(ectsInt) || ectsInt <= 0) {
-      setEctsError(true);
-      valid = false;
-    }
+    const ectsValid = !isNaN(ectsInt) && ectsInt > 0;
+    const gradeValid = GRADE_REGEX.test(grade);
 
-    if (!GRADE_REGEX.test(grade)) {
-      setGradeError(true);
-      valid = false;
-    }
+    setSubjectError(!subjectValid);
+    setEctsError(!ectsValid);
+    setGradeError(!gradeValid);
 
-    return valid;
-  };
+    return subjectValid && ectsValid && gradeValid;
+  }, [subjectName, ectsPoints, grade]);
 
   const handleConfirm = () => {
     if (!validate()) return;
 
-    setSubjectList(list =>
-      itemBeingEdited
-        ? list.map(i =>
-            i.key === itemBeingEdited.key
-              ? { ...i, subjectName, ects: ectsPoints, grade }
-              : i,
-          )
-        : [
-            ...list,
-            {
-              key: uuid.v4().toString(),
-              subjectName,
-              ects: ectsPoints,
-              grade,
-            },
-          ],
-    );
+    setSubjectList(prevList => {
+      if (itemBeingEdited) {
+        return prevList.map(item =>
+          item.key === itemBeingEdited.key ? { ...item, subjectName, ects: ectsPoints, grade } : item,
+        );
+      }
+
+      const newItem: CalcItem = {
+        key: (uuid.v4() as string) || Math.random().toString(),
+        subjectName,
+        ects: ectsPoints,
+        grade,
+      };
+
+      return [...prevList, newItem];
+    });
 
     handleCancel();
   };
@@ -186,15 +154,11 @@ function CalculatorScreen() {
   };
 
   const selectItem = useCallback((key: string) => {
-    setSelectedItems(prev =>
-      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key],
-    );
+    setSelectedItems(prevItem => (prevItem.includes(key) ? prevItem.filter(k => k !== key) : [...prevItem, key]));
   }, []);
 
   const selectAllItems = useCallback(() => {
-    setSelectedItems(prev =>
-      prev.length === subjectList.length ? [] : subjectList.map(i => i.key),
-    );
+    setSelectedItems(prevItem => (prevItem.length === subjectList.length ? [] : subjectList.map(i => i.key)));
   }, [subjectList]);
 
   const deleteSelectedItems = useCallback(() => {
@@ -203,13 +167,12 @@ function CalculatorScreen() {
   }, [selectedItems]);
 
   const selectedIcon = useMemo(() => {
-    if (selectedItems.length === subjectList.length && selectedItems.length > 0)
-      return ICON_CHECK;
-    if (selectedItems.length > 0) return ICON_SQUARE;
-    return '';
-  }, [selectedItems, subjectList.length]);
+    if (selectedItems.length === 0) return '';
 
-  // --- PopupForm grouped props for readability ---
+    const allSelected = selectedItems.length === subjectList.length;
+    return allSelected ? ICON_CHECK : ICON_SQUARE;
+  }, [selectedItems.length, subjectList.length]);
+
   const popupVisibility = {
     isVisible: popUpMenuVisible,
     isEditMode: !!itemBeingEdited,
@@ -238,53 +201,44 @@ function CalculatorScreen() {
     onCancel: handleCancel,
   };
 
-  // renderItem now lives inside SubjectsList
-
   return (
     <View style={styles.container}>
       {/* Summary */}
       <SummaryPanel
-        gradeAverageLabel={t('gradeAverage').replace(' ', '\n')}
+        subjectsAmountLabel={t('subjectsAmount')}
         ectsSumLabel={t('ectsSum').replace(' ', '\n')}
         weightedAverageLabel={t('weightedAverage').replace(' ', '\n')}
-        averageGrade={averageGrade}
+        subjectsAmount={subjectList.length.toString() || '0'}
         totalEcts={totalEcts}
         weightedAverage={weightedAverage}
       />
 
-      {/* Header row */}
-      <HeaderRow
-        subjectLabel={t('subjectName')}
-        gradeLabel={t('gradeName')}
-        onToggleSelectAll={selectAllItems}
-        selectedIcon={selectedIcon}
-        hasSelection={selectedItems.length > 0}
-      />
+        {/* Header row */}
+        <HeaderRow
+          subjectLabel={t('subjectName')}
+          gradeLabel={t('gradeName')}
+          onToggleSelectAll={selectAllItems}
+          selectedIcon={selectedIcon}
+          hasSelection={selectedItems.length > 0}
+        />
 
-      {subjectList.length === 0 && (
-        <View style={styles.noItemsInfo}>
-          <Text style={styles.noItemsInfoText}>
-            {t('noItemsAddedInfoText')}
-          </Text>
-          <Text style={styles.noItemsInfoText}>{t('noItemsInfoText')}</Text>
-        </View>
-      )}
+        {subjectList.length === 0 && (
+          <View style={styles.noItemsInfo}>
+            <Text style={styles.noItemsInfoText}>{t('noItemsAddedInfoText')}</Text>
+            <Text style={styles.noItemsInfoText}>{t('noItemsInfoText')}</Text>
+          </View>
+        )}
 
-      <SubjectsList
-        data={subjectList}
-        selectedItems={selectedItems}
-        onToggleSelect={selectItem}
-        onPressItem={openEditMenu}
-        checkedIcon={ICON_CHECK}
-      />
+        <SubjectsList
+          data={subjectList}
+          selectedItems={selectedItems}
+          onToggleSelect={selectItem}
+          onPressItem={openEditMenu}
+          checkedIcon={ICON_CHECK}
+        />
 
       {/* Batch delete / Add button */}
-      <BatchActions
-        hasSelection={selectedItems.length > 0}
-        onDelete={deleteSelectedItems}
-        onAdd={openAddMenu}
-        removeCourseLabel={t('removeCourseMenuBtnText')}
-      />
+      <BatchActions hasSelection={selectedItems.length > 0} onDelete={deleteSelectedItems} onAdd={openAddMenu} />
 
       {/* Popup form for adding/editing subjects */}
       <PopupForm

@@ -2,7 +2,6 @@ import { StyleSheet } from 'react-native';
 import { Theme } from '../../../../../styles/globalTheme/theme';
 
 export const createHeaderRowStyles = (theme: Theme) => {
-
   const colors = {
     backgroundHeader: theme.colors.calculatorBackgroundHeader,
     backgroundPrimary: theme.colors.Foreground,
@@ -11,10 +10,10 @@ export const createHeaderRowStyles = (theme: Theme) => {
   };
   return StyleSheet.create({
     headerRootItemContainer: {
-      backgroundColor: colors.backgroundHeader,
+      backgroundColor: '#00000025',
       paddingLeft: 10,
       borderRadius: theme.borderRads.m,
-      height: 40,
+      height: 50,
       display: 'flex',
       flexDirection: 'row',
       gap: 5,

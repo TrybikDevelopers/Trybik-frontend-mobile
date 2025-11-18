@@ -35,7 +35,6 @@ interface PopupFormProps {
 
 const PopupForm: React.FC<PopupFormProps> = ({
   isVisible,
-  isEditMode,
   values,
   errors,
   onChange,
@@ -48,7 +47,6 @@ const PopupForm: React.FC<PopupFormProps> = ({
   const { t } = useTranslation();
   const ectsInputRef = useRef<TextInput>(null);
   const gradeInputRef = useRef<TextInput>(null);
-  const [subjectDropdownOpen, setSubjectDropdownOpen] = useState(false);
   const [ectsFocused, setEctsFocused] = useState(false);
   const [gradeFocused, setGradeFocused] = useState(false);
 
@@ -61,9 +59,6 @@ const PopupForm: React.FC<PopupFormProps> = ({
   const { subject: subjectError, ects: ectsError, grade: gradeError } = errors;
 
   if (!isVisible) return null;
-  // High-level labels
-  const overlayLabel = isEditMode ? t('editSubject') : t('addSubject');
-  const overlayText = isEditMode ? t('editSubjectText') : t('addSubjectText');
 
   // Field titles & placeholders
   const subjectTitle = t('subjectName');
@@ -71,27 +66,11 @@ const PopupForm: React.FC<PopupFormProps> = ({
   const gradeTitle = t('gradeName');
   const subjectPlaceholder = t('placeholderCalc');
   const ectsPlaceholder = t('placeholderCalc2');
-  const gradePlaceholder = 'np. 4';
+  const gradePlaceholder = t('gradePlaceholder');
 
   // Action button labels
   const confirmLabel = t('confirmButton');
   const cancelLabel = t('cancelButton');
-
-  // Error messages (null when no error)
-  const subjectErrorMessage = subjectError ? t('addSubjectErrorText') : null;
-  const ectsErrorMessage = ectsError ? t('addECTSErrorText') : null;
-  const gradeErrorMessage = gradeError ? t('addGradeErrorText') : null;
-
-  // Error components for readability
-  const SubjectErrorComponent = subjectErrorMessage ? (
-    <Text style={styles.inputErrorFeed}>{subjectErrorMessage}</Text>
-  ) : null;
-  const EctsErrorComponent = ectsErrorMessage ? (
-    <Text style={styles.inputErrorFeed}>{ectsErrorMessage}</Text>
-  ) : null;
-  const GradeErrorComponent = gradeErrorMessage ? (
-    <Text style={styles.inputErrorFeed}>{gradeErrorMessage}</Text>
-  ) : null;
 
   const ectsInputStyle = [
     styles.userInput,
@@ -109,77 +88,88 @@ const PopupForm: React.FC<PopupFormProps> = ({
   return (
     <View style={styles.overlayContainer}>
       <View style={styles.popUpMenu}>
-        <Text style={styles.overlayLabel}>{overlayLabel}</Text>
-        <Text style={styles.Label}>{overlayText}</Text>
-
-        <Text
-          style={[styles.overlayLabel, subjectError && styles.overlayLabelErr]}
+        <View
+          style={[
+            styles.subjectSelect,
+            subjectError && styles.subjectSelectError,
+          ]}
         >
-          {subjectTitle}
-        </Text>
-        <View style={styles.Label}>
-          <View
+          <Text
             style={[
-              styles.subjectSelect,
-              subjectError && styles.subjectSelectError,
+              styles.overlayLabel,
+              subjectError && styles.overlayLabelErr,
             ]}
           >
+            {subjectTitle}
+          </Text>
+          <View style={styles.subjectSelectDropdown}>
             <DropdownMenu
               items={allSubjects}
               selectedValue={subjectName}
               onSelect={onChangeSubject}
-              isOpen={subjectDropdownOpen}
-              onOpen={() => setSubjectDropdownOpen(true)}
-              onClose={() => setSubjectDropdownOpen(false)}
               placeholder={subjectPlaceholder}
+              error={subjectError}
             />
           </View>
         </View>
-        {SubjectErrorComponent}
 
-        <Text
-          style={[styles.overlayLabel, ectsError && styles.overlayLabelErr]}
-        >
-          {ectsTitle}
-        </Text>
-        <TextInput
-          ref={ectsInputRef}
-          style={ectsInputStyle}
-          placeholder={ectsPlaceholder}
-          placeholderTextColor={'#a1a1a1'}
-          value={ectsPoints}
-          onChangeText={onChangeEcts}
-          keyboardType="numeric"
-          onFocus={() => setEctsFocused(true)}
-          onBlur={() => setEctsFocused(false)}
-        />
-        {EctsErrorComponent}
+        <View style={styles.inputGroup}>
+          <View style={styles.inputField}>
+            <Text
+              style={[styles.overlayLabel, ectsError && styles.overlayLabelErr]}
+            >
+              {ectsTitle}
+            </Text>
+            <TextInput
+              ref={ectsInputRef}
+              style={ectsInputStyle}
+              placeholder={ectsPlaceholder}
+              placeholderTextColor={'#a1a1a1'}
+              value={ectsPoints}
+              onChangeText={onChangeEcts}
+              keyboardType="numeric"
+              onFocus={() => setEctsFocused(true)}
+              onBlur={() => setEctsFocused(false)}
+            />
+          </View>
 
-        <Text
-          style={[styles.overlayLabel, gradeError && styles.overlayLabelErr]}
-        >
-          {gradeTitle}
-        </Text>
-        <TextInput
-          ref={gradeInputRef}
-          style={gradeInputStyle}
-          placeholder={gradePlaceholder}
-          placeholderTextColor={'#a1a1a1'}
-          value={grade}
-          onChangeText={onChangeGrade}
-          keyboardType="numeric"
-          onFocus={() => setGradeFocused(true)}
-          onBlur={() => setGradeFocused(false)}
-        />
-        {GradeErrorComponent}
+          <View style={styles.inputField}>
+            <Text
+              style={[
+                styles.overlayLabel,
+                gradeError && styles.overlayLabelErr,
+              ]}
+            >
+              {gradeTitle}
+            </Text>
+            <TextInput
+              ref={gradeInputRef}
+              style={gradeInputStyle}
+              placeholder={gradePlaceholder}
+              placeholderTextColor={'#a1a1a1'}
+              value={grade}
+              onChangeText={onChangeGrade}
+              keyboardType="numeric"
+              onFocus={() => setGradeFocused(true)}
+              onBlur={() => setGradeFocused(false)}
+            />
+          </View>
+        </View>
 
-        <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
-          <Text style={styles.buttonText}>{confirmLabel}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-          <Text style={styles.buttonText}>{cancelLabel}</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={[styles.button, styles.cancelButton]}
+            onPress={onCancel}
+          >
+            <Text style={styles.buttonText}>{cancelLabel}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.confirmButton]}
+            onPress={onConfirm}
+          >
+            <Text style={styles.buttonText}>{confirmLabel}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
