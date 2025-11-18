@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { View, Text } from 'react-native';
-import uuid from 'react-native-uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+import uuid from 'react-native-uuid';
 import { getSubjectList } from '../../../services/calculator/CalculatorService';
 import { useSettingsStore } from '../../../store/settingsStore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useTheme } from '@shopify/restyle';
 import { Theme } from '../../../styles/globalTheme/theme';
-import createCalculatorStyles from './styles/CalculatorScreen.styles.ts';
-import HeaderRow from './components/HeaderRow';
-import SummaryPanel from './components/SummaryPanel';
 import BatchActions from './components/BatchActions';
+import HeaderRow from './components/HeaderRow';
 import PopupForm from './components/PopupForm';
-import { CalcItem } from './types';
 import SubjectsList from './components/SubjectsList';
+import SummaryPanel from './components/SummaryPanel';
+import createCalculatorStyles from './styles/CalculatorScreen.styles.ts';
+import { CalcItem } from './types';
 
 // Constants promoted outside the component to avoid re-creation
 const STORAGE_KEY = '@calculator_subject_list';
@@ -59,28 +59,25 @@ function CalculatorScreen() {
     })();
   }, [deanGroup]);
 
-  const saveSubjectList = async (list: CalcItem[]) => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    } catch (error) {
-      console.error('Błąd zapisu listy przedmiotów:', error);
-    }
-  };
-
-  const loadSubjectList = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
-      if (jsonValue != null) setSubjectList(JSON.parse(jsonValue));
-    } catch (error) {
-      console.error('Błąd odczytu listy przedmiotów:', error);
-    }
-  };
-
   useEffect(() => {
-    loadSubjectList();
+    (async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
+        if (jsonValue != null) setSubjectList(JSON.parse(jsonValue));
+      } catch (error) {
+        console.error('Błąd odczytu listy przedmiotów:', error);
+      }
+    })();
   }, []);
+
   useEffect(() => {
-    saveSubjectList(subjectList);
+    (async () => {
+      try {
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(subjectList));
+      } catch (error) {
+        console.error('Błąd zapisu listy przedmiotów:', error);
+      }
+    })();
   }, [subjectList]);
 
   // Derived values memoized to avoid repeated computations on render
@@ -123,30 +120,18 @@ function CalculatorScreen() {
     setPopUpMenuVisible(false);
   };
 
-  const validate = () => {
-    let valid = true;
-    setSubjectError(false);
-    setEctsError(false);
-    setGradeError(false);
-
-    if (!subjectName.trim()) {
-      setSubjectError(true);
-      valid = false;
-    }
-
+  const validate = useCallback(() => {
+    const subjectValid = !!subjectName.trim();
     const ectsInt = parseInt(ectsPoints, 10);
-    if (isNaN(ectsInt) || ectsInt <= 0) {
-      setEctsError(true);
-      valid = false;
-    }
+    const ectsValid = !isNaN(ectsInt) && ectsInt > 0;
+    const gradeValid = GRADE_REGEX.test(grade);
 
-    if (!GRADE_REGEX.test(grade)) {
-      setGradeError(true);
-      valid = false;
-    }
+    setSubjectError(!subjectValid);
+    setEctsError(!ectsValid);
+    setGradeError(!gradeValid);
 
-    return valid;
-  };
+    return subjectValid && ectsValid && gradeValid;
+  }, [subjectName, ectsPoints, grade]);
 
   const handleConfirm = () => {
     if (!validate()) return;
@@ -202,12 +187,15 @@ function CalculatorScreen() {
     setSelectedItems([]);
   }, [selectedItems]);
 
-  const selectedIcon = useMemo(() => {
-    if (selectedItems.length === subjectList.length && selectedItems.length > 0)
-      return ICON_CHECK;
-    if (selectedItems.length > 0) return ICON_SQUARE;
-    return '';
-  }, [selectedItems, subjectList.length]);
+  const selectedIcon = useMemo(
+    () =>
+      selectedItems.length > 0
+        ? selectedItems.length === subjectList.length
+          ? ICON_CHECK
+          : ICON_SQUARE
+        : '',
+    [selectedItems, subjectList.length],
+  );
 
   // --- PopupForm grouped props for readability ---
   const popupVisibility = {
@@ -283,7 +271,6 @@ function CalculatorScreen() {
         hasSelection={selectedItems.length > 0}
         onDelete={deleteSelectedItems}
         onAdd={openAddMenu}
-        removeCourseLabel={t('removeCourseMenuBtnText')}
       />
 
       {/* Popup form for adding/editing subjects */}

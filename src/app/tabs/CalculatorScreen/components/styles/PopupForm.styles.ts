@@ -17,139 +17,126 @@ export const createPopupFormStyles = (theme: Theme) => {
     confirmButtonBg: theme.colors.confirmAccent2,
     cancelButtonBg: theme.colors.cancelAccent2,
   };
+
+  const baseInput = {
+    backgroundColor: colors.backgroundSecondary,
+    color: colors.textPrimary,
+    borderRadius: theme.borderRads.m,
+    borderWidth: 1,
+    borderColor: colors.borderDefault,
+  };
+
   return StyleSheet.create({
     overlayContainer: {
-      ...StyleSheet.absoluteFillObject,
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      height: '100%',
+      width: '100%',
+
+      display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: colors.overlay,
-      zIndex: 1,
+      zIndex: 2,
     },
     popUpMenu: {
-      gap: 5,
-      paddingVertical: 20,
-      borderWidth: 1,
+      borderWidth: 2,
       borderColor: colors.borderDefault,
       backgroundColor: colors.backgroundPopup,
-      position: 'absolute',
-      justifyContent: 'center',
+
+      justifyContent: 'space-around',
+      alignItems: 'center',
       width: '80%',
-      height: 'auto',
+      height: '70%',
       borderRadius: theme.borderRads.m,
+      padding: 10,
     },
     overlayLabel: {
+      fontSize: 15,
+      textAlign: 'left',
+      fontWeight: '600',
       color: colors.textPrimary,
-      fontSize: 16,
-      paddingLeft: 15,
-      paddingBottom: 5,
     },
     overlayLabelErr: {
       color: colors.textError,
-      fontSize: 16,
-      paddingLeft: 15,
-      paddingBottom: 5,
-    },
-    Label: {
-      color: colors.textSecondary,
-      fontSize: 16,
-      paddingLeft: 15,
     },
     subjectSelectError: {
-      display: 'flex',
-      borderRadius: 8,
-      width: 132,
-      height: 42,
-      backgroundColor: colors.borderError,
-      justifyContent: 'center',
-      alignContent: 'center',
-      alignItems: 'center',
-    },
-    subjectSelect: {
-      width: 132,
-      height: 42,
-      backgroundColor: '#0000',
-      borderRadius: 8,
-      justifyContent: 'center',
-      display: 'flex',
-      alignContent: 'center',
-      alignItems: 'center',
-    },
-    inputErrorFeed: {
-      color: colors.borderError,
-      fontSize: 14,
-      paddingLeft: 15,
-    },
-    userInput: {
-      backgroundColor: colors.backgroundSecondary,
-      color: colors.textPrimary,
-      paddingLeft: 10,
-      alignSelf: 'center',
-      borderRadius: theme.borderRads.m,
-      width: '90%',
-      borderWidth: 1,
-      borderColor: colors.borderDefault,
-    },
-    userInputFocused: {
-      backgroundColor: colors.backgroundSecondary,
-      color: colors.textPrimary,
-      paddingLeft: 10,
-      alignSelf: 'center',
-      borderRadius: theme.borderRads.m,
-      width: '90%',
-      borderWidth: 1,
-      borderColor: colors.borderDefault,
-      outlineColor: colors.borderGray,
-      outlineWidth: 4,
-    },
-    userInputFocusedError: {
-      backgroundColor: colors.backgroundSecondary,
-      color: colors.textPrimary,
-      paddingLeft: 10,
-      alignSelf: 'center',
-      borderRadius: theme.borderRads.m,
-      width: '90%',
-      borderWidth: 1,
-      borderColor: colors.borderDefault,
-      outlineColor: colors.accentRedTransparent,
-      outlineWidth: 4,
-    },
-    invalidUserInput: {
-      backgroundColor: colors.backgroundSecondary,
-      color: colors.textPrimary,
-      paddingLeft: 10,
-      alignSelf: 'center',
-      borderRadius: theme.borderRads.m,
-      width: '90%',
-      borderWidth: 1,
       borderColor: colors.borderError,
     },
-    confirmButton: {
-      alignSelf: 'center',
-      marginBottom: '2%',
-      marginTop: '2%',
-      width: '80%',
+
+    inputGroup: {
+      width: '90%',
+      gap: 8,
+      flexDirection: 'row',
+    },
+
+    inputField: {
+      width: '50%',
+      gap: 6,
+    },
+
+    subjectSelect: {
+      width: '90%',
+      borderRadius: 8,
+
+      display: 'flex',
+      gap: 6,
+      justifyContent: 'center',
+    },
+
+    subjectSelectDropdown: {
+      height: 40,
+      width: '100%',
+    },
+
+    inputErrorFeed: {
+      color: colors.borderError,
+    },
+
+    userInput: {
+      ...baseInput,
+      paddingLeft: 10,
+    },
+
+    userInputFocused: {
+      ...baseInput,
+      outlineColor: colors.borderGray,
+      outlineWidth: 3,
+    },
+    userInputFocusedError: {
+      ...baseInput,
+      outlineColor: colors.accentRedTransparent,
+      outlineWidth: 3,
+    },
+    invalidUserInput: {
+      ...baseInput,
+      borderColor: colors.borderError,
+      borderWidth: 2,
+    },
+    button: {
+      width: '45%',
       height: 50,
-      backgroundColor: colors.confirmButtonBg,
       borderRadius: theme.borderRads.m,
       justifyContent: 'center',
       alignItems: 'center',
     },
+    confirmButton: {
+      backgroundColor: colors.confirmButtonBg,
+    },
     cancelButton: {
-      alignSelf: 'center',
-      marginBottom: '2%',
-      marginTop: '2%',
-      width: '80%',
-      height: 50,
       backgroundColor: colors.cancelButtonBg,
-      borderRadius: theme.borderRads.m,
-      justifyContent: 'center',
-      alignItems: 'center',
       borderWidth: 1,
       borderColor: colors.cancelButtonBorder,
     },
+    buttonRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '90%',
+      alignSelf: 'center',
+    },
     buttonText: {
       color: colors.textPrimary,
-      fontSize: 16,
       fontWeight: '600',
     },
   });

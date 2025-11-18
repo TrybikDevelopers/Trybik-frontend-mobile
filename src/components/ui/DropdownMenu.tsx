@@ -1,36 +1,38 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, FlatList } from 'react-native';
-import { DropdownMenuProps } from '../../types/uiTypes/DropdownMenuTypes';
-// import MenuStyles from '../../styles/uiStyles/DropdownMenuStyles';
-import { createDropdownMenuStyles } from '../../styles/uiStyles/DropdownMenuStyles';
 import { useTheme } from '@shopify/restyle';
+import React from 'react';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { Theme } from '../../styles/globalTheme/theme';
+import { createDropdownMenuStyles } from '../../styles/uiStyles/DropdownMenuStyles';
+// Local props interface for DropdownMenu component
+interface Props {
+  items: string[];
+  selectedValue?: string;
+  onSelect: (value: string) => void;
+  placeholder: string;
+  error?: boolean;
+}
 
-const ITEM_HEIGHT = 45;
-const MAX_LIST_HEIGHT = 200;
-
-const DropdownMenu: React.FC<DropdownMenuProps> = ({
-  width,
-  height,
-  listPosUp,
+const DropdownMenu: React.FC<Props> = ({
   items,
   selectedValue,
   onSelect,
-  isOpen,
-  onOpen,
-  onClose,
   placeholder,
+  error,
 }) => {
-  const listHeight = Math.min(items.length * ITEM_HEIGHT, MAX_LIST_HEIGHT);
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const theme = useTheme<Theme>();
   const MenuStyles = createDropdownMenuStyles(theme);
 
+  const handleClick = () => {
+    setIsOpen(prev => !prev);
+  };
+
   return (
-    <View style={[{ width: width ?? 130, height: height ?? 40 }]}>
+    <View>
       <TouchableOpacity
-        style={[MenuStyles.button, MenuStyles.buttonSizes]}
-        onPress={() => (isOpen ? onClose() : onOpen())}
+        style={[MenuStyles.button, isOpen && MenuStyles.buttonPressed, error && MenuStyles.errorBorder]}
+        onPress={() => handleClick()}
       >
         {selectedValue ? (
           <Text style={MenuStyles.groupSelectText}>{selectedValue}</Text>
@@ -40,25 +42,17 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
       </TouchableOpacity>
 
       {isOpen && (
-        <View
-          style={[
-            MenuStyles.modal,
-            MenuStyles.list,
-            {
-              top: listPosUp ? -listHeight : height ?? 40,
-              height: listHeight,
-            },
-          ]}
-        >
+        <View style={[MenuStyles.modal, MenuStyles.list]}>
           <FlatList
             data={items}
             keyExtractor={item => item}
-            style={{ flexGrow: 0 }}
+            style={[MenuStyles.flatList]}
+            nestedScrollEnabled={true}
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => {
                   onSelect(item);
-                  onClose();
+                  handleClick();
                 }}
                 style={MenuStyles.option}
               >
@@ -73,4 +67,4 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 };
 
 // Memoize to prevent unnecessary re-renders
-  export default React.memo(DropdownMenu);
+export default React.memo(DropdownMenu);

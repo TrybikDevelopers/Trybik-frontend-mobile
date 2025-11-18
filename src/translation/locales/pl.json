@@ -119,7 +119,7 @@
   "weightedAverage": "Średnia ważona",
   "addSubject": "Dodaj przedmiot",
   "addSubjectText": "Wprowadź nazwę przedmiotu, wartość ECTS i ocenę",
-  "placeholderCalc": "np. Mechanika",
+  "placeholderCalc": "Nie wbyrano",
   "placeholderCalc2": "np. 2",
   "ECTSVal": "Wartość ECTS",
   "removeCourseMenuBtnText": "Usuń wybrane",
@@ -128,5 +128,7 @@
   "addSubjectErrorText": "Wybierz przedmiot",
   "addECTSErrorText": "Wprowadź poprawną wartość ECTS",
   "addGradeErrorText": "Wprowadź poprawną ocenę",
-  "showLectures": "Ukryj wykłady"
+  "showLectures": "Ukryj wykłady",
+  "gradePlaceholder": "np. 3.5"
+
 }

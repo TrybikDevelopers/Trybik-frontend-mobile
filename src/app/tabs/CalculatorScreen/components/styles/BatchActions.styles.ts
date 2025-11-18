@@ -3,31 +3,33 @@ import { Theme } from '../../../../../styles/globalTheme/theme';
 
 export const createBatchActionsStyles = (theme: Theme) => {
   const colors = {
-    accentBlue: theme.colors.confirmAccent,
-    accentRed: theme.colors.cancelAccent,
+    magenta: theme.colors.confirmAccent,
+    red: theme.colors.cancelAccent,
   };
   return StyleSheet.create({
     addCourseMenuBtn: {
+      position: 'absolute',
       width: 50,
-      height: 50,
+      aspectRatio: 1,
       borderRadius: 50,
-      backgroundColor: colors.accentBlue,
+      backgroundColor: colors.magenta,
       display: 'flex',
-      alignSelf: 'center',
       alignItems: 'center',
       justifyContent: 'center',
-      marginBottom: 20,
+      bottom: 20,
+      right: 30,
     },
     addCourseMenuBtnText: {
-      fontSize: 35,
+      fontSize: 45,
       color: '#fff',
     },
     removeCourseMenuBtn: {
-      width: 250,
+      position: 'absolute',
+      bottom: 20,
+      width: '30%',
       height: 45,
-      marginTop: 5,
       borderRadius: 50,
-      backgroundColor: colors.accentRed,
+      backgroundColor: colors.red,
       display: 'flex',
       alignSelf: 'center',
       alignItems: 'center',
