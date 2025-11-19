@@ -1,61 +1,66 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions  } from 'react-native'; 
 import { Theme } from '../../../../../styles/globalTheme/theme';
 
-export const createLandscapeViewStyles = (theme: Theme) =>
-  StyleSheet.create({
+export const createLandscapeViewStyles = (theme: Theme) => {
+  const { width, height } = Dimensions.get('window'); 
+  const toPrecentMultiplier = 0.001; 
+  const HeaderFontSize = width * (25 * toPrecentMultiplier); 
+
+  return StyleSheet.create({
     mainRow: {
       flexDirection: 'row',
-      marginLeft: 12,
-      alignItems: 'flex-start', // ensures columns align at top
+      marginTop: height * (35 * toPrecentMultiplier), 
+      marginLeft: width * (10 * toPrecentMultiplier), 
+      alignItems: 'flex-start',
     },
 
     weekIndicator: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      marginBottom: 8, // consistent gap before hours start
+      marginBottom: height * (8 * toPrecentMultiplier), 
     },
 
     weekText: {
-      fontSize: 13,
+      fontSize: HeaderFontSize, 
       fontWeight: '600',
       color: theme.colors.themeOpposite,
-      marginLeft: 5,
+      marginLeft: width * (15 * toPrecentMultiplier), 
     },
 
     hoursColumn: {
-      marginRight: 10,
-      marginTop: 5, // baseline top margin
+      marginRight: width * (10 * toPrecentMultiplier), 
+      marginTop: height * (10 * toPrecentMultiplier), 
       alignItems: 'center',
     },
 
     dayColumn: {
-      marginRight: 10,
-      width: '16%',
-      marginTop: 5, // SAME as hoursColumn
+      flex: 1,
+      marginRight: width * (10 * toPrecentMultiplier), 
+      marginTop: height * (10 * toPrecentMultiplier), 
       alignItems: 'center',
     },
 
     hourBlock: {
       width: '100%',
       alignItems: 'stretch',
-            gap: 6,
-      marginBottom: 6,
+      gap: height * (8 * toPrecentMultiplier), 
+      marginBottom: height * (10 * toPrecentMultiplier), 
     },
 
     dayTitleLandscape: {
-      fontSize: 13,
+      fontSize: HeaderFontSize, 
       fontWeight: '700',
       color: theme.colors.dayTitle,
       textAlign: 'center',
-      marginBottom: 8, // match weekIndicator marginBottom
-      
+      marginBottom: height * (10 * toPrecentMultiplier), 
     },
 
     lessonBlock: {
-      gap: 6,
-      marginBottom: 6,
+      gap: height * (8 * toPrecentMultiplier), 
+      marginBottom: height * (10 * toPrecentMultiplier), 
       width: '100%',
       alignItems: 'stretch',
     },
   });
+};

@@ -31,19 +31,6 @@ export const createTimetableStyles = (theme: Theme) => {
       justifyContent: 'center',
     },
 
-    weekButton: {
-      backgroundColor:'red',
-      width:50,
-      height:80
-      // flexDirection: 'row',
-      // alignItems: 'center',
-      // justifyContent: 'center',
-      // backgroundColor: colors.btnBg,
-      // paddingVertical: 6,
-      // paddingHorizontal: 10,
-      // borderRadius: 8,
-    },
-
     weekIndicator: {
       flexDirection: 'row',
       justifyContent: 'center',
@@ -64,14 +51,7 @@ export const createTimetableStyles = (theme: Theme) => {
       alignItems: 'center',
       marginBottom: 10,
     },
-    navButton: {
-      backgroundColor: colors.btnBg,
-      borderRadius: 8,
-      paddingHorizontal: 16,
-      paddingVertical: 8,
-      minWidth: 44,
-      alignItems: 'center',
-    },
+
     navButtonText: {
       color: colors.textColor,
       fontSize: 18,

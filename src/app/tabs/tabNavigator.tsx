@@ -23,8 +23,11 @@ import type { SettingsState } from '../../store/settingsStoreTypes';
 const Tab = createBottomTabNavigator();
 
 const NavigationStyles = StyleSheet.create({
-  HeaderLogo: {
+  HeaderLogoPortrait: {
     marginLeft: 15,
+  },
+  HeaderLogoLandscape: {
+    marginLeft: 5,
   },
 });
 
@@ -39,14 +42,18 @@ const getScreenOptions = (
     themeMode === 'dark' ? (
       <HeaderLogoLight
         width={200}
-        height={isLandscape ? 50 : 80}
-        style={NavigationStyles.HeaderLogo}
+        height={isLandscape ? 35 : 80}
+        style={
+          isLandscape
+            ? NavigationStyles.HeaderLogoLandscape
+            : NavigationStyles.HeaderLogoPortrait
+        }
       />
     ) : (
       <HeaderLogoDark
         width={200}
-        height={isLandscape ? 50 : 80}
-        style={NavigationStyles.HeaderLogo}
+        height={isLandscape ? 35 : 80}
+        style={NavigationStyles.HeaderLogoPortrait}
       />
     ),
   tabBarActiveTintColor: styles.tabBarActiveTintColor,
