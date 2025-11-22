@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LessonSeparator from './LessonSeparator';
 import HourDisplay from '../../../../components/ui/HourDisplay';
@@ -29,6 +35,9 @@ interface LandscapeViewProps {
   academicHours: string[];
   isOddWeek: boolean;
   setIsOddWeek: React.Dispatch<React.SetStateAction<boolean>>;
+  hideLectures: boolean;
+  refreshing: boolean;
+  onRefresh: () => void;
 }
 
 const LandscapeView: React.FC<LandscapeViewProps> = ({
@@ -36,6 +45,9 @@ const LandscapeView: React.FC<LandscapeViewProps> = ({
   academicHours,
   isOddWeek,
   setIsOddWeek,
+  hideLectures,
+  refreshing,
+  onRefresh,
 }) => {
   const { t } = useTranslation();
   const theme = useTheme<Theme>();
@@ -67,7 +79,12 @@ const LandscapeView: React.FC<LandscapeViewProps> = ({
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={styles.mainRow}>
         {/* Hours column */}
         <View style={styles.hoursColumn}>
@@ -101,14 +118,23 @@ const LandscapeView: React.FC<LandscapeViewProps> = ({
 
         {/* Days columns */}
         {timetable.map(day => {
-          const lessons = isOddWeek ? day.odd : day.even;
-          const fullLessons = getFullSchedule(academicHours, lessons);
+          let lessons = isOddWeek ? day.odd : day.even;
+
+          if (hideLectures) {
+            lessons = lessons.filter(
+              (item: TimetableItem) => item.type !== 'LECTURE',
+            );
+          }
+
+          const fullLessons = getFullSchedule(academicHours, lessons)
+   
+
           return (
             <View key={day.name} style={styles.dayColumn}>
               <Text style={styles.dayTitleLandscape}>
                 {t(`dayNames.${dayNameMap[day.name]}`)}
               </Text>
-              {fullLessons.map((lesson, index) => (
+              {fullLessons.map((lesson: TimetableItem, index: number) => (
                 <View
                   key={`${lesson.rowId}-${lesson.classroom}`}
                   style={styles.lessonBlock}
