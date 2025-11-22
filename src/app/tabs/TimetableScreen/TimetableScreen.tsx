@@ -223,6 +223,8 @@ const TimetableScreen = () => {
           academicHours={academicHours}
           isOddWeek={isOddWeek}
           setIsOddWeek={setIsOddWeek}
+          // showEmptySlots={showEmptySlots}
+          // hideLectures={hideLectures}
         />
       )}
 

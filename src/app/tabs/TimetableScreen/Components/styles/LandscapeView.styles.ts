@@ -4,7 +4,7 @@ import { Theme } from '../../../../../styles/globalTheme/theme';
 export const createLandscapeViewStyles = (theme: Theme) => {
   const { width, height } = Dimensions.get('window'); 
   const toPrecentMultiplier = 0.001; 
-  const HeaderFontSize = width * (25 * toPrecentMultiplier); 
+  const HeaderFontSize = width * (20 * toPrecentMultiplier); 
 
   return StyleSheet.create({
     mainRow: {
@@ -25,7 +25,7 @@ export const createLandscapeViewStyles = (theme: Theme) => {
       fontSize: HeaderFontSize, 
       fontWeight: '600',
       color: theme.colors.themeOpposite,
-      marginLeft: width * (15 * toPrecentMultiplier), 
+      marginLeft: width * (15 * toPrecentMultiplier),  
     },
 
     hoursColumn: {

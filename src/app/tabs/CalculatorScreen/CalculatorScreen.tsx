@@ -219,7 +219,9 @@ function CalculatorScreen() {
     return (
       <View style={styles.rootItemContainer}>
         <TouchableOpacity
-          style={isSelected ? styles.deleteButtonSelected : styles.deleteButtonBase}
+          style={
+            isSelected ? styles.deleteButtonSelected : styles.deleteButtonBase
+          }
           onPress={() => selectItem(item.key)}
         >
           <Text style={styles.deleteButtonText}>
@@ -250,7 +252,11 @@ function CalculatorScreen() {
       {/* Header row with select all */}
       <View style={styles.headerRootItemContainer}>
         <TouchableOpacity
-          style={selectedItems.length > 0 ? styles.deleteButtonSelected : styles.deleteButtonBase}
+          style={
+            selectedItems.length > 0
+              ? styles.deleteButtonSelected
+              : styles.deleteButtonBase
+          }
           onPress={selectAllItems}
         >
           <Text style={styles.deleteButtonText}>
@@ -313,6 +319,7 @@ function CalculatorScreen() {
           >
             {t('gradeAverage')}
           </Text>
+
           <Text
             style={[styles.countersText, styles.singleItem, styles.centerText]}
           >

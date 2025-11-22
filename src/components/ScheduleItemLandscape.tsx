@@ -23,11 +23,11 @@ const ScheduleItemLandscape: React.FC<ScheduleItemLandscapeProps> = ({
     <View
       style={[
         styles.ScreenContainer,
-        !room
-          ? { backgroundColor: 'transparent' }
-          : isActive
-          ? { borderColor: theme.colors.confirmAccent + 'ce', borderWidth: 1 }
-          : {},
+        !room && { backgroundColor: 'transparent' },
+        isActive && {
+          borderColor: theme.colors.confirmAccent + 'ce',
+          borderWidth: 1,
+        },
       ]}
     >
       <View style={ActiveBarStyles.bar} />

@@ -36,13 +36,15 @@ const getScreenOptions = (
   styles: ReturnType<typeof tabNavigatorStyles>,
   themeMode: SettingsState['themeMode'],
   isLandscape: boolean,
+  logoWidth: number,
+  logoHeight: number,
 ) => ({
   headerShown: true,
   headerTitle: () =>
     themeMode === 'dark' ? (
       <HeaderLogoLight
-        width={200}
-        height={isLandscape ? 35 : 80}
+        width={logoWidth} 
+        height={logoHeight} 
         style={
           isLandscape
             ? NavigationStyles.HeaderLogoLandscape
@@ -51,8 +53,8 @@ const getScreenOptions = (
       />
     ) : (
       <HeaderLogoDark
-        width={200}
-        height={isLandscape ? 35 : 80}
+        width={logoWidth} 
+        height={logoHeight} 
         style={NavigationStyles.HeaderLogoPortrait}
       />
     ),
@@ -127,15 +129,25 @@ const TabNavigator: React.FC = () => {
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
 
-  //style initialization
+  // Logo dimensions
+  const logoWidth = isLandscape ? width * 0.2 : width * 0.47;
+  const logoHeight = isLandscape ? height * 0.08 : height * 0.12;
+
+  // style initialization
   const theme = useTheme<Theme>();
   const styles = tabNavigatorStyles(theme);
   const themeMode = useSettingsStore(state => state.themeMode);
-  // const currentLogo = themeMode === 'dark' ? HeaderLogoLight : HeaderLogoDark;
 
   return (
     <Tab.Navigator
-      screenOptions={getScreenOptions(insets, styles, themeMode, isLandscape)}
+      screenOptions={getScreenOptions(
+        insets,
+        styles,
+        themeMode,
+        isLandscape,
+        logoWidth,
+        logoHeight,
+      )}
     >
       <Tab.Screen
         name="timetable"
