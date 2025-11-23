@@ -18,14 +18,23 @@ export const createLandscapeViewStyles = (theme: Theme) => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      marginBottom: height * (8 * toPrecentMultiplier), 
+      marginBottom: height * (10 * toPrecentMultiplier), 
     },
 
-    weekText: {
+    weekTypeText: {
       fontSize: HeaderFontSize, 
       fontWeight: '600',
       color: theme.colors.themeOpposite,
       marginLeft: width * (15 * toPrecentMultiplier),  
+      
+    },
+
+    dayTitleLandscape: {
+      fontSize: HeaderFontSize, 
+      fontWeight: '700',
+      color: theme.colors.dayTitle,
+      textAlign: 'center',
+      marginBottom: height * (10 * toPrecentMultiplier), 
     },
 
     hoursColumn: {
@@ -45,14 +54,6 @@ export const createLandscapeViewStyles = (theme: Theme) => {
       width: '100%',
       alignItems: 'stretch',
       gap: height * (8 * toPrecentMultiplier), 
-      marginBottom: height * (10 * toPrecentMultiplier), 
-    },
-
-    dayTitleLandscape: {
-      fontSize: HeaderFontSize, 
-      fontWeight: '700',
-      color: theme.colors.dayTitle,
-      textAlign: 'center',
       marginBottom: height * (10 * toPrecentMultiplier), 
     },
 

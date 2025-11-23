@@ -98,7 +98,7 @@ const LandscapeView: React.FC<LandscapeViewProps> = ({
               size={15}
               color={theme.colors.themeOpposite}
             />
-            <Text style={styles.weekText}>{getWeekTypeText()}</Text>
+            <Text style={styles.weekTypeText}>{getWeekTypeText()}</Text>
           </TouchableOpacity>
 
           {academicHours.map((hour, index) => {
@@ -126,8 +126,7 @@ const LandscapeView: React.FC<LandscapeViewProps> = ({
             );
           }
 
-          const fullLessons = getFullSchedule(academicHours, lessons)
-   
+          const fullLessons = getFullSchedule(academicHours, lessons);
 
           return (
             <View key={day.name} style={styles.dayColumn}>

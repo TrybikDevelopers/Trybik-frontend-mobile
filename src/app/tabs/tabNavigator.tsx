@@ -43,8 +43,8 @@ const getScreenOptions = (
   headerTitle: () =>
     themeMode === 'dark' ? (
       <HeaderLogoLight
-        width={logoWidth} 
-        height={logoHeight} 
+        width={logoWidth}
+        height={logoHeight}
         style={
           isLandscape
             ? NavigationStyles.HeaderLogoLandscape
@@ -53,8 +53,8 @@ const getScreenOptions = (
       />
     ) : (
       <HeaderLogoDark
-        width={logoWidth} 
-        height={logoHeight} 
+        width={logoWidth}
+        height={logoHeight}
         style={NavigationStyles.HeaderLogoPortrait}
       />
     ),
@@ -86,11 +86,11 @@ const getScreenOptions = (
   tabBarLabelStyle: {
     fontSize: 10,
     fontFamily: 'InterMedium',
-    marginBottom: 4,
+    marginBottom: 2,
   },
 
   tabBarIconStyle: {
-    marginTop: 10,
+    marginTop: 0,
   },
 });
 
