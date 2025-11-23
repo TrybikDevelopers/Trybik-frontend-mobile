@@ -1,5 +1,13 @@
 import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  useWindowDimensions,
+  Dimensions,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LetterIcon from '../ui/letterIcon';
 import { getCorrectColor } from '../../utils/getCorrectColor';
@@ -12,9 +20,12 @@ const ActivityLegendModal: React.FC<ActivityLegendModalProps> = ({
   visible,
   onClose,
 }) => {
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
+
   const { t } = useTranslation();
   const theme = useTheme<Theme>();
-  const styles = createStyles(theme);
+  const styles = createStyles(theme, isLandscape);
 
   const activityTypes = [
     { letter: 'W', label: t('lecture') },
@@ -43,7 +54,11 @@ const ActivityLegendModal: React.FC<ActivityLegendModalProps> = ({
           activeOpacity={1}
           onPress={e => e.stopPropagation()}
         >
-          <TouchableOpacity style={styles.closeBtn} onPress={onClose} hitSlop={20}>
+          <TouchableOpacity
+            style={styles.closeBtn}
+            onPress={onClose}
+            hitSlop={20}
+          >
             <Icon name="close" size={12} style={styles.icon} />
           </TouchableOpacity>
 
@@ -67,8 +82,9 @@ const ActivityLegendModal: React.FC<ActivityLegendModalProps> = ({
   );
 };
 
-const createStyles = (theme: Theme) => {
+const createStyles = (theme: Theme, isLandscape: boolean) => {
   const { colors } = theme;
+  const { width, height } = Dimensions.get('window');
 
   return StyleSheet.create({
     modalOverlay: {
@@ -78,7 +94,8 @@ const createStyles = (theme: Theme) => {
       alignItems: 'center',
     },
     modalContent: {
-      width: '80%',
+      width: width * (isLandscape ? 0.42 : 0.85),
+      height: height * (isLandscape ? 0.9 : 0.5),
       backgroundColor: colors.settingsBackground,
       borderRadius: 8,
       padding: 20,
