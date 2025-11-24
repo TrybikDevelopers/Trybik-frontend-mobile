@@ -35,7 +35,7 @@ interface LandscapeViewProps {
   academicHours: string[];
   isOddWeek: boolean;
   setIsOddWeek: React.Dispatch<React.SetStateAction<boolean>>;
-  hideLectures: boolean;
+  showLectures: boolean;
   refreshing: boolean;
   onRefresh: () => void;
 }
@@ -45,7 +45,7 @@ const LandscapeView: React.FC<LandscapeViewProps> = ({
   academicHours,
   isOddWeek,
   setIsOddWeek,
-  hideLectures,
+  showLectures,
   refreshing,
   onRefresh,
 }) => {
@@ -120,7 +120,7 @@ const LandscapeView: React.FC<LandscapeViewProps> = ({
         {timetable.map(day => {
           let lessons = isOddWeek ? day.odd : day.even;
 
-          if (hideLectures) {
+          if (showLectures) {
             lessons = lessons.filter(
               (item: TimetableItem) => item.type !== 'LECTURE',
             );

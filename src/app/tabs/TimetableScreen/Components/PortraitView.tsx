@@ -43,7 +43,7 @@ interface PortraitViewProps {
   isOddWeek: boolean;
   refreshing: boolean;
   showEmptySlots: boolean;
-  hideLectures: boolean;
+  showLectures: boolean;
   onRefresh: () => void;
   navigateToPrevDay: () => void;
   navigateToNextDay: () => void;
@@ -58,7 +58,7 @@ const PortraitView: React.FC<PortraitViewProps> = ({
   isOddWeek,
   refreshing,
   showEmptySlots,
-  hideLectures,
+  showLectures,
   onRefresh,
   navigateToPrevDay,
   navigateToNextDay,
@@ -73,7 +73,7 @@ const PortraitView: React.FC<PortraitViewProps> = ({
     const currentDay = timetable[currentDayIndex];
     if (!currentDay) return [];
     let lessons = isOddWeek ? currentDay.odd : currentDay.even;
-    if (hideLectures)
+    if (showLectures)
       lessons = lessons.filter(
         (item: TimetableItem) => item.type !== 'LECTURE',
       );
