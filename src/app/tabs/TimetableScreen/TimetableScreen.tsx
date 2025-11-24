@@ -25,8 +25,8 @@ const TimetableScreen = () => {
   const { timetable, academicHours, actions } = useTimetableStore();
   const { setTimetable, setAcademicHours, markOffline } = actions;
 
-  const [currentDayIndex, setCurrentDayIndex] = useState(0);
-  const [isOddWeek, setIsOddWeek] = useState(true);
+  const [DayIndex, setDayIndex] = useState(0);
+  const [OddWeek, setOddWeek] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -37,7 +37,7 @@ const TimetableScreen = () => {
   const groups = useSettingsStore(state => state.groups);
   const loading = useSettingsStore(state => state.loading);
   const showEmptySlots = useSettingsStore(state => state.showEmptySlots);
-  const hideLectures = useSettingsStore(state => state.hideLectures);
+  const showLectures = useSettingsStore(state => state.showLectures);
   const { fetchInitialDeanGroups } = useSettingsActions();
 
   const { width, height } = useWindowDimensions();
@@ -46,18 +46,18 @@ const TimetableScreen = () => {
   const styles = createTimetableStyles(theme);
 
   const navigationRef = useRef({
-    currentDayIndex,
-    isOddWeek,
+    DayIndex,
+    OddWeek,
     timetableLength: 0,
   });
 
   useEffect(() => {
     navigationRef.current = {
-      currentDayIndex,
-      isOddWeek,
+      DayIndex,
+      OddWeek,
       timetableLength: timetable.length,
     };
-  }, [currentDayIndex, isOddWeek, timetable.length]);
+  }, [DayIndex, OddWeek, timetable.length]);
 
   const areAllGroupsSelected = useCallback(() => !!groups.dean, [groups.dean]);
 
@@ -88,12 +88,12 @@ const TimetableScreen = () => {
 
         setAcademicHours(hours);
         setTimetable(timetableResponse.data);
-        setIsOddWeek(getCurrentWeekType());
+        setOddWeek(getCurrentWeekType());
 
         const today = new Date();
         const jsDay = today.getDay();
         const index = jsDay === 0 || jsDay === 6 ? 0 : jsDay - 1;
-        setCurrentDayIndex(index);
+        setDayIndex(index);
 
         markOffline(false);
       } catch (err: any) {
@@ -151,19 +151,18 @@ const TimetableScreen = () => {
     markOffline,
   ]);
 
-  // Nawigacja między dniami
+  // Navigation between days
   const navigateToNextDay = useCallback(() => {
     if (isNavigating) return;
     setIsNavigating(true);
 
-    const { currentDayIndex: currentIndex, timetableLength } =
-      navigationRef.current;
+    const { DayIndex: currentIndex, timetableLength } = navigationRef.current;
 
     if (currentIndex < timetableLength - 1) {
-      setCurrentDayIndex(currentIndex + 1);
+      setDayIndex(currentIndex + 1);
     } else {
-      setIsOddWeek(prev => !prev);
-      setCurrentDayIndex(0);
+      setOddWeek(prev => !prev);
+      setDayIndex(0);
     }
 
     setTimeout(() => setIsNavigating(false), 200);
@@ -173,14 +172,13 @@ const TimetableScreen = () => {
     if (isNavigating) return;
     setIsNavigating(true);
 
-    const { currentDayIndex: currentIndex, timetableLength } =
-      navigationRef.current;
+    const { DayIndex: currentIndex, timetableLength } = navigationRef.current;
 
     if (currentIndex > 0) {
-      setCurrentDayIndex(currentIndex - 1);
+      setDayIndex(currentIndex - 1);
     } else {
-      setIsOddWeek(prev => !prev);
-      setCurrentDayIndex(timetableLength - 1);
+      setOddWeek(prev => !prev);
+      setDayIndex(timetableLength - 1);
     }
 
     setTimeout(() => setIsNavigating(false), 200);
@@ -199,7 +197,7 @@ const TimetableScreen = () => {
     );
   }
 
-  // Główny render
+  // Main render
   return (
     <View style={styles.bgContainer}>
       {!isLandscape ? (
@@ -207,23 +205,23 @@ const TimetableScreen = () => {
           theme={theme}
           timetable={timetable}
           academicHours={academicHours}
-          currentDayIndex={currentDayIndex}
-          isOddWeek={isOddWeek}
+          currentDayIndex={DayIndex}
+          isOddWeek={OddWeek}
           refreshing={refreshing}
           showEmptySlots={showEmptySlots}
-          hideLectures={hideLectures}
+          showLectures={showLectures}
           onRefresh={onRefresh}
           navigateToPrevDay={navigateToPrevDay}
           navigateToNextDay={navigateToNextDay}
-          setIsOddWeek={setIsOddWeek}
+          setIsOddWeek={setOddWeek}
         />
       ) : (
         <LandscapeView
           timetable={timetable}
           academicHours={academicHours}
-          isOddWeek={isOddWeek}
-          setIsOddWeek={setIsOddWeek}
-          hideLectures={hideLectures}
+          isOddWeek={OddWeek}
+          setIsOddWeek={setOddWeek}
+          showLectures={showLectures}
           refreshing={refreshing}
           onRefresh={onRefresh}
         />

@@ -1,7 +1,9 @@
 import { ONE_WEEK_MS } from '../constants/constants';
 
-export default function getCurrentWeekType(): boolean {
-  const now = new Date();
+export default function getCurrentWeekType(
+  baseDate: Date = new Date(),
+): boolean {
+  const now = baseDate;
   const year = now.getFullYear();
 
   const octFirst = new Date(year, 9, 1);

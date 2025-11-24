@@ -1,7 +1,10 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import { DropdownMenuProps } from '../../types/uiTypes/DropdownMenuTypes';
-import MenuStyles from '../../styles/uiStyles/DropdownMenuStyles';
+// import MenuStyles from '../../styles/uiStyles/DropdownMenuStyles';
+import { createDropdownMenuStyles } from '../../styles/uiStyles/DropdownMenuStyles';
+import { useTheme } from '@shopify/restyle';
+import { Theme } from '../../styles/globalTheme/theme';
 
 const ITEM_HEIGHT = 45;
 const MAX_LIST_HEIGHT = 200;
@@ -19,6 +22,9 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
   placeholder,
 }) => {
   const listHeight = Math.min(items.length * ITEM_HEIGHT, MAX_LIST_HEIGHT);
+
+  const theme = useTheme<Theme>();
+  const MenuStyles = createDropdownMenuStyles(theme);
 
   return (
     <View style={[{ width: width ?? 130, height: height ?? 40 }]}>
@@ -67,4 +73,4 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 };
 
 // Memoize to prevent unnecessary re-renders
-export default React.memo(DropdownMenu);
+  export default React.memo(DropdownMenu);

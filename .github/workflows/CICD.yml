@@ -146,11 +146,11 @@ jobs:
           fi
           echo "aab_path=$AAB_FILE" >> $GITHUB_OUTPUT
 
-      # - name: Upload AAB to Google Play
-      #   uses: r0adkll/upload-google-play@v1
-      #   with:
-      #     serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-      #     packageName: com.pkwmapp
-      #     releaseFiles: android/app/build/outputs/bundle/release/PKWMApp-*-release.aab
-      #     releaseName: ${{ github.ref_name }}
-      #     track: internal
+      - name: Upload AAB to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: com.trybik
+          releaseFiles: android/app/build/outputs/bundle/release/Trybik-*-release.aab
+          releaseName: ${{ github.ref_name }}
+          track: alpha

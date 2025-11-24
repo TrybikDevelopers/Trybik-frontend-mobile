@@ -6,6 +6,33 @@ interface ApiOptions extends RequestInit {
   query?: Record<string, string | string[] | undefined>;
 }
 
+// Build query string with support for repeated keys
+function buildQueryString(query?: ApiOptions['query']): string {
+  if (!query) return '';
+  const params = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(query)) {
+    if (value === undefined) continue;
+    if (Array.isArray(value)) {
+      for (const v of value) params.append(key, v);
+    } else {
+      params.append(key, value);
+    }
+  }
+  
+  const qs = params.toString();
+  return qs ? `?${qs}` : '';
+}
+
+// Safely parse JSON; return raw text when not JSON
+function safeParse(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
+}
+
 async function apiFetch<T = unknown>(
   path: string,
   options: ApiOptions = {},
@@ -13,61 +40,38 @@ async function apiFetch<T = unknown>(
   const { query, headers, ...rest } = options;
   const token = useAuthStore.getState().token;
 
-  const searchParams = new URLSearchParams();
-  if (query) {
-    Object.entries(query).forEach(([key, value]) => {
-      if (value !== undefined) {
-        if (Array.isArray(value)) {
-          value.forEach(v => searchParams.append(key, v)); // repeated keys
-        } else {
-          searchParams.append(key, value);
-        }
-      }
-    });
-  }
-  const queryString = searchParams.toString()
-    ? `?${searchParams.toString()}`
-    : '';
-  console.log(`${API_URL}${path}${queryString}`);
+  const method = (rest.method || 'GET').toUpperCase();
+  const isBodyRequest = ['POST', 'PUT', 'PATCH'].includes(method);
 
-  const isBodyRequest =
-    rest.method &&
-    ['POST', 'PUT', 'PATCH'].includes(rest.method?.toUpperCase());
+  const queryString = buildQueryString(query);
+  const url = `${API_URL}${path}${queryString}`;
 
-  const response = await fetch(`${API_URL}${path}${queryString}`, {
-    headers: {
-      ...(isBodyRequest ? { 'Content-Type': 'application/json' } : {}),
-      'X-API-KEY': API_KEY,
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...headers,
-    },
+  const baseHeaders: Record<string, string> = {
+    'X-API-KEY': API_KEY,
+    ...(isBodyRequest ? { 'Content-Type': 'application/json' } : {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+
+  const response = await fetch(url, {
+    headers: { ...baseHeaders, ...(headers as Record<string, string>) },
     ...rest,
   });
 
-  let rawBody: string;
+  let text: string;
   try {
-    rawBody = await response.text();
+    text = await response.text();
   } catch {
-    throw new Error(`Failed to read response body`);
+    throw new Error('Failed to read response body');
   }
 
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(rawBody);
-  } catch {
-    parsed = rawBody;
-  }
+  const data = safeParse(text);
 
   if (!response.ok) {
-    throw new Error(
-      `API error ${response.status}: ${
-        typeof parsed === 'string' ? parsed : JSON.stringify(parsed)
-      }`,
-    );
+    const message = typeof data === 'string' ? data : JSON.stringify(data);
+    throw new Error(`API error ${response.status}: ${message}`);
   }
 
-  console.log('responsedata =', parsed);
-  return parsed as T;
+  return data as T;
 }
 
 export default apiFetch;

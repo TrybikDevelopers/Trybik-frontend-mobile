@@ -38,16 +38,20 @@ const createGroupSelectStyles = (theme: Theme, hasError: boolean) => {
     dropDownContainer: {
       backgroundColor: colors.Foreground,
       borderColor: colors.border,
-      zIndex: 5001,
     },
     dropDown: {
       backgroundColor: colors.Foreground,
       borderColor: hasError ? colors.error : colors.border,
       borderWidth: hasError ? 2 : 1,
-      zIndex: 5000,
     },
     container: {
       width: 130,
+      zIndex: 1000,
+      elevation: 4,
+    },
+    containerOpen: {
+      zIndex: 8000,
+      elevation: 20,
     },
     textStyle: {
       color: colors.textPrimary,
@@ -57,6 +61,14 @@ const createGroupSelectStyles = (theme: Theme, hasError: boolean) => {
     },
     searchContainer: {
       backgroundColor: colors.Foreground,
+    },
+    openDropDownContainer: {
+      zIndex: 8000,
+      elevation: 20,
+    },
+    iconContainer: {
+     zIndex: 9000,
+     elevation: 20
     },
   });
 };
@@ -101,7 +113,7 @@ const GroupSelectDropdown: React.FC<Props> = ({
   const open = activeDropdown === key;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, open && styles.containerOpen]}>
       {groupTitle && <Text style={styles.text}>{groupTitle}</Text>}
 
       <DropDownPicker
@@ -109,6 +121,9 @@ const GroupSelectDropdown: React.FC<Props> = ({
         open={open}
         value={value}
         items={items}
+        // Raise z-index only while open, so multiple dropdowns stack correctly
+        zIndex={open ? 8000 : 1000}
+        zIndexInverse={open ? 1000 : 8000}
         setOpen={openValue => {
           const isOpen =
             typeof openValue === 'function' ? openValue(open) : openValue;
@@ -120,10 +135,14 @@ const GroupSelectDropdown: React.FC<Props> = ({
           setGroup(key, newValue);
         }}
         setItems={setItems}
+        listItemContainerStyle={styles.iconContainer}
         placeholder={t('groupSelectPlaceholder')}
         searchable
         searchPlaceholder={t('searchPlaceholder')}
-        dropDownContainerStyle={styles.dropDownContainer}
+        dropDownContainerStyle={[
+          styles.dropDownContainer,
+          open && styles.openDropDownContainer,
+        ]}
         containerStyle={styles.container}
         style={styles.dropDown}
         textStyle={styles.textStyle}

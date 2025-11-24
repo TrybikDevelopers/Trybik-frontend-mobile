@@ -1,23 +1,21 @@
+import { VEXO_KEY } from '@env';
 import {
   NavigationContainer,
   useNavigationContainerRef,
 } from '@react-navigation/native';
-import TabNavigator from './src/app/tabs/tabNavigator';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useSettingsStore } from './src/store/settingsStore';
-import FirstTimeSetupScreen from './src/app/main/FirstTimeSetupScreen';
-import i18n from './i18n';
-import { I18nextProvider } from 'react-i18next';
-import { useEffect, useState } from 'react';
-import { compareVersions } from './src/utils/compareVersions';
-import { getLatestVersion } from './src/services/versionService';
-import { getAppVersion } from './src/utils/getAppVersion';
-import UpdateAlertModal from './src/components/modals/UpdateAlertModal';
 import { ThemeProvider } from '@shopify/restyle';
+import { useEffect, useState } from 'react';
+import { I18nextProvider } from 'react-i18next';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { vexo } from 'vexo-analytics';
-import { VEXO_KEY } from '@env';
-
-// import { PostHogProvider } from 'posthog-react-native';
+import i18n from './i18n';
+import FirstTimeSetupScreen from './src/app/main/FirstTimeSetupScreen';
+import TabNavigator from './src/app/tabs/tabNavigator';
+import UpdateAlertModal from './src/components/modals/UpdateAlertModal';
+import { getLatestVersion } from './src/services/versionService';
+import { useSettingsStore } from './src/store/settingsStore';
+import { compareVersions } from './src/utils/compareVersions';
+import { getAppVersion } from './src/utils/getAppVersion';
 
 type RootStackParamList = {
   Settings: undefined;
@@ -76,20 +74,11 @@ const App = () => {
       <I18nextProvider i18n={i18n}>
         <ThemeProvider theme={currentAppTheme}>
           <NavigationContainer ref={navigationRef}>
-            {/* <PostHogProvider
-              apiKey={POSTHOG_KEY}
-              options={{ host: 'https://us.i.posthog.com' }}
-              autocapture={{
-                captureTouches: true,
-                captureScreens: false,
-              }}
-            > */}
-              {!isSetupComplete ? (
-                <FirstTimeSetupScreen onDone={handleSetupDone} />
-              ) : (
-                <TabNavigator />
-              )}
-            {/* </PostHogProvider> */}
+            {!isSetupComplete ? (
+              <FirstTimeSetupScreen onDone={handleSetupDone} />
+            ) : (
+              <TabNavigator />
+            )}
           </NavigationContainer>
 
           <UpdateAlertModal
